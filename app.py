@@ -22,18 +22,10 @@ if "quiz_done" not in st.session_state:
     st.session_state.quiz_done = False
 
 
-# 사용자 DB
-USER_DB = {
-    "admin": "1234",
-    "user1": "pass1",
-    "user2": "pass2",
-    "testid": "tpass"
-}
-
-
 # csv 파일
 QUIZ_FILE = "quiz_data.csv"
 RESULT_FILE = "result_data.csv"
+USER_DB = "users.csv"
 
 
 if not os.path.exists(RESULT_FILE):
@@ -48,15 +40,25 @@ def load_quiz_data():
     df = pd.read_csv(QUIZ_FILE)
     return df
 
-
+# 캐싱 적용 (사용자 DB 로딩)
+@st.cache_data
+def load_user_db():
+    u_df = pd.read_csv(USER_DB)
+    return u_df
 
 # 로그인 함수
+
 def login(user_id, user_pw):
-    if user_id in USER_DB:
-        if USER_DB[user_id] == user_pw:
+    df = load_user_db()
+    
+    # 입력받은 아이디가 데이터프레임에 존재하는지 확인
+    user_row = df[df['id'] == user_id]
+    
+    if not user_row.empty:
+        # 비밀번호 확인 (문자열 타입으로 비교)
+        if str(user_row.iloc[0]['password']) == str(user_pw):
             return True
     return False
-
 
 # 로그아웃 함수
 def logout():
