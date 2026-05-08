@@ -103,7 +103,7 @@ elif not st.session_state.quiz_done:
             st.subheader(f"{i+1}. {row['question']}")
 
             user_answer = st.radio(
-                "",
+                "정답을 입력하세요",
                 [row["A"], row["B"], row["C"], row["D"]],
                 key=f"q{i}"
             )
